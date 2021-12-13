@@ -53,5 +53,10 @@ class ExtendedJSONDecorder(json.JSONDecoder):
     pass
 
 
-class ConfigurableJSONEncoder:
-    pass
+class ConfigurableJSONTranscoder:
+    
+    def decoder():
+        pass
+
+    def encoder():
+        pass
