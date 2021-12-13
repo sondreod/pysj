@@ -1,5 +1,6 @@
 import json
 import hashlib
+import numpy as np
 from typing import Literal
 import uuid as _uuid
 from typing import Iterable
@@ -41,6 +42,9 @@ class ExtendedJSONEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, datetime):
             return o.isoformat(timespec="seconds")
+        
+        if type(o) in [np.int8, np.int16, np.int32, np.int64]:
+            return int(o)
 
         return super().default(o)
 
