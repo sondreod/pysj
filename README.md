@@ -18,6 +18,9 @@ print(sha256("test"))
 
 # JSON Encoder converting datetime to ISO format
 json.dumps(
-    {"timestamp": datetime.datetime.fromisoformat("2021-12-01T04:50:00.123456")}, cls=ExtendedJSONEncoder,
+    {
+        "timestamp": datetime.datetime.fromisoformat("2021-12-01T04:50:00.123456")
+    },
+    cls=ExtendedJSONEncoder,
 )
 ```
