@@ -10,13 +10,12 @@ readme = "README.md"
 requires-python = ">=3.6"
 classifiers = ["License :: OSI Approved :: MIT License",  "Topic :: Software Development"]
 dynamic = ["version", "description"]
+dependencies = ["numpy"]
 
 [project.urls]
 source = "https://github.com/sondreod/pysj"
 documentation = "https://github.com/sondreod/pysj"
 
-[dependencies]
-numpy = {}
 
 [dev-dependencies]
 black = {}
