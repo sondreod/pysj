@@ -8,16 +8,21 @@ authors = [{name = "Sondre S. Ødegård"}]
 license = {file = "LICENSE"}
 readme = "README.md"
 requires-python = ">=3.6"
-classifiers = ["License :: OSI Approved :: MIT License",  "Topic :: Software Development"]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Software Development"
+]
 dynamic = ["version", "description"]
-dependencies = ["numpy"]
+dependencies = [
+    "numpy"
+]
 
 [project.urls]
 source = "https://github.com/sondreod/pysj"
 documentation = "https://github.com/sondreod/pysj"
 
-
 [dev-dependencies]
 black = {}
 "hypothesis[cli]" = {}
 pytest = {}
+numpy = {}
