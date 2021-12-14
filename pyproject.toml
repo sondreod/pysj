@@ -6,8 +6,14 @@ build-backend = "flit_core.buildapi"
 name = "pysj"
 authors = [{name = "Sondre S. Ødegård"}]
 license = {file = "LICENSE"}
-classifiers = ["License :: OSI Approved :: MIT License"]
+readme = "README.md"
+requires-python = ">=3.6"
+classifiers = ["License :: OSI Approved :: MIT License",  "Topic :: Software Development"]
 dynamic = ["version", "description"]
+
+[project.urls]
+source = "https://github.com/sondreod/pysj"
+documentation = "https://github.com/sondreod/pysj"
 
 [dependencies]
 numpy = {}
