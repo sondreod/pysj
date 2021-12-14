@@ -6,7 +6,7 @@ functions I find myself reimplementing in several projects. As of now all functi
 The name is a commonly used shortened version of the Norwegian word "pysjamas" (in english: pajamas/pyjamas).
 Coding in your pysjamas/pajamas/pyjamas is comfortable. This package is an attempt to make Python development a bit more comfortable.
 
-This is an ongoing project and so far just a few functions are implemented, as well as a project structure, test and packaging.
+This is an ongoing project and so far just a few functions are implemented, as well as a project structure, tests and packaging.
 
 
 ### Installation
