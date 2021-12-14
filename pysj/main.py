@@ -42,7 +42,7 @@ class ExtendedJSONEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, datetime):
             return o.isoformat(timespec="seconds")
-        
+
         if type(o) in [np.int8, np.int16, np.int32, np.int64]:
             return int(o)
 
@@ -54,7 +54,6 @@ class ExtendedJSONDecorder(json.JSONDecoder):
 
 
 class ConfigurableJSONTranscoder:
-    
     def decoder():
         pass
 
