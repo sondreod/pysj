@@ -22,4 +22,4 @@ def test_numpy_input():
         cls=ExtendedJSONEncoder,
     )
 
-    assert test == '[1, 2, 3, 10, 11, 12]'
+    assert test == "[1, 2, 3, 10, 11, 12]"
