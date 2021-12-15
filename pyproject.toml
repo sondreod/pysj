@@ -13,13 +13,10 @@ classifiers = [
     "Topic :: Software Development"
 ]
 dynamic = ["version", "description"]
-dependencies = [
-    "numpy"
-]
 
 [project.urls]
-source = "https://github.com/sondreod/pysj"
-documentation = "https://github.com/sondreod/pysj"
+Source = "https://github.com/sondreod/pysj"
+Documentation = "https://github.com/sondreod/pysj"
 
 [dev-dependencies]
 black = {}
