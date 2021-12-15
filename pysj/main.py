@@ -1,10 +1,12 @@
 import json
-import hashlib
-import numpy as np
-from typing import Literal
-import uuid as _uuid
 from typing import Iterable
 from datetime import datetime
+
+NUMPY_SUPPORT_FLAG = True
+try:
+    import numpy as np
+except ImportError:
+    NUMPY_SUPPORT_FLAG = False
 
 
 def flatten(iterable: Iterable):
@@ -22,7 +24,7 @@ def flatten(iterable: Iterable):
     def _recursively_flatten(iterable: Iterable):
         for e in iterable:
             if isinstance(e, Iterable) and not isinstance(e, str):
-                yield from flatten(e)
+                yield from _recursively_flatten(e)
             else:
                 yield e
 
@@ -43,7 +45,7 @@ class ExtendedJSONEncoder(json.JSONEncoder):
         if isinstance(o, datetime):
             return o.isoformat(timespec="seconds")
 
-        if type(o) in [np.int8, np.int16, np.int32, np.int64]:
+        if NUMPY_SUPPORT_FLAG and type(o) in [np.int8, np.int16, np.int32, np.int64]:
             return int(o)
 
         return super().default(o)
