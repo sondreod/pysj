@@ -1,5 +1,6 @@
 import json
 import datetime
+import numpy as np
 
 from pysj import ExtendedJSONEncoder
 
@@ -12,3 +13,13 @@ def test_datetime_json_encoding():
     )
 
     assert test == '{"lol": "2021-12-01T04:50:00"}'
+
+
+def test_numpy_input():
+
+    test = json.dumps(
+        [1, 2, 3, np.int64(10), np.int8(11), np.int32(12)],
+        cls=ExtendedJSONEncoder,
+    )
+
+    assert test == '[1, 2, 3, 10, 11, 12]'
