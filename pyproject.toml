@@ -23,3 +23,20 @@ black = {}
 "hypothesis[cli]" = {}
 pytest = {}
 numpy = {}
+tox = {}
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+isolated_build = True
+envlist = py{38,39}
+
+[testenv]
+deps = 
+    pytest >= 3.0.0, <4
+    numpy
+    black
+commands =
+    black .
+    pytest
+"""
