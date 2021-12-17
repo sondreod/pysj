@@ -1,6 +1,7 @@
 import json
-from typing import Iterable
+from typing import Iterable, Callable, Any
 from datetime import datetime
+import typing
 
 NUMPY_SUPPORT_FLAG = True
 try:
@@ -51,8 +52,25 @@ class ExtendedJSONEncoder(json.JSONEncoder):
         return super().default(o)
 
 
-class ExtendedJSONDecorder(json.JSONDecoder):
-    pass
+def _extended_JSON_decoder_object_hook(d):
+    for k, v in d.items():
+        if isinstance(v, dict):
+            _extended_JSON_decoder_object_hook(v)
+        else:
+            if isinstance(v, str):
+                if any(
+                    [
+                        v.startswith("19"),
+                        v.startswith("20"),
+                    ]
+                ):
+                    d[k] = datetime.fromisoformat(v)
+    return d
+
+
+class ExtendedJSONDecoder(json.JSONDecoder):
+    def __init__(self):
+        super().__init__(object_hook=_extended_JSON_decoder_object_hook)
 
 
 class ConfigurableJSONTranscoder:

@@ -2,7 +2,7 @@ import json
 import datetime
 import numpy as np
 
-from pysj import ExtendedJSONEncoder
+from pysj import ExtendedJSONEncoder, ExtendedJSONDecoder
 
 
 def test_datetime_json_encoding():
@@ -13,6 +13,16 @@ def test_datetime_json_encoding():
     )
 
     assert test == '{"lol": "2021-12-01T04:50:00"}'
+
+
+def test_datetime_json_decoding():
+
+    test = json.loads(
+        '{"lol": "2021-12-01T04:50:00"}',
+        cls=ExtendedJSONDecoder,
+    )
+
+    assert test == {"lol": datetime.datetime.fromisoformat("2021-12-01T04:50:00")}
 
 
 def test_numpy_input():
