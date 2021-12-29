@@ -24,6 +24,7 @@ black = {}
 pytest = {}
 numpy = {}
 tox = {}
+flit = {}
 
 [tool.tox]
 legacy_tox_ini = """
