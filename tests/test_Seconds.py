@@ -17,6 +17,10 @@ def test_milliseconds_more_than_a_second_less_than_two():
     assert seconds(milliseconds=1999) == 1
 
 
+def test_large_return_value():
+    assert seconds(years=1999) == 63040464000
+
+
 def test_time_interval_composition():
     assert (
         seconds(
@@ -31,3 +35,11 @@ def test_time_interval_composition():
         )
         == 42706861
     )
+
+
+def test_interval_comparison_quarter_in_year():
+    assert seconds(quarters=4) == seconds(years=1)
+
+
+def test_interval_comparison_days_in_year():
+    assert seconds(days=365) == seconds(years=1)
