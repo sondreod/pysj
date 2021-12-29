@@ -1,6 +1,6 @@
 import json
 from typing import Iterable, Callable, Any
-from datetime import datetime
+from datetime import datetime, timedelta
 import typing
 
 NUMPY_SUPPORT_FLAG = True
@@ -8,6 +8,34 @@ try:
     import numpy as np
 except ImportError:
     NUMPY_SUPPORT_FLAG = False
+
+
+def seconds(
+    days=0,
+    seconds=0,
+    microseconds=0,
+    milliseconds=0,
+    minutes=0,
+    hours=0,
+    weeks=0,
+    years=0,
+    months=0,
+    quarters=0,
+) -> int:
+    """Returns the number of seconds in the given time intervals combined, rounded down to nearest integer.
+
+    This is a short variant of `int(timedelta(**kwargs).total_seconds())` with a
+    few extra named time intervals(year, month, quarter)"""
+
+    days += months * 30
+    days += years * 365
+    months += quarters * 3
+
+    return int(
+        timedelta(
+            days, seconds, microseconds, milliseconds, minutes, hours, weeks
+        ).total_seconds()
+    )
 
 
 def flatten(iterable: Iterable):
