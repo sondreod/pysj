@@ -1,6 +1,7 @@
 import json
 from typing import Iterable, Callable, Any
 from datetime import datetime, timedelta
+from fractions import Fraction
 import typing
 
 NUMPY_SUPPORT_FLAG = True
@@ -26,11 +27,11 @@ def seconds(
 
     This is a short variant of `int(timedelta(**kwargs).total_seconds())` with a
     few extra named time intervals(year, month, quarter)
-    
+
     A year is calculated as 365 days, a month is 30 days, a quarter is 1/4 of a year
     """
 
-    days += 365/4 * quarters
+    days += float((Fraction(365, 4) * quarters))
     days += months * 30
     days += years * 365
 
