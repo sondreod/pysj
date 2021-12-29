@@ -25,11 +25,14 @@ def seconds(
     """Returns the number of seconds in the given time intervals combined, rounded down to nearest integer.
 
     This is a short variant of `int(timedelta(**kwargs).total_seconds())` with a
-    few extra named time intervals(year, month, quarter)"""
+    few extra named time intervals(year, month, quarter)
+    
+    A year is calculated as 365 days, a month is 30 days, a quarter is 1/4 of a year
+    """
 
+    days += 365/4 * quarters
     days += months * 30
     days += years * 365
-    months += quarters * 3
 
     return int(
         timedelta(
