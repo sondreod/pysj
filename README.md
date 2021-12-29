@@ -27,3 +27,33 @@ json.dumps(
     cls=ExtendedJSONEncoder,
 )
 ```
+
+### API Overview
+Public classes and functions are importable from the top level package.
+
+## Classes
+__`ExtendedJSONEncoder`__
+Subclass for `json.JSONEncoder` making encoding of datetime and numpy arrays work.
+
+__`ExtendedJSONDecoder`__
+Not finished: Subclass for `json.JSONDecoder` making decoding of datetime and work.
+
+
+## Functions
+__`flatten`__
+Recursively flattens an iterable (depth first)
+
+__`seconds`__
+Returns the number of seconds in the given time intervals combined, rounded down to nearest integer.
+
+__`sha256`__
+Returns the hexdigest representation of the sha256 hash from the plaintext input
+
+__`sha1`__
+Returns the hexdigest representation of the sha1 hash from the plaintext input
+
+__`md5`__
+Returns the hexdigest representation of the md5 hash from the plaintext input
+
+__`uuid`__
+Returns the hex representation of a uuid4 as string
