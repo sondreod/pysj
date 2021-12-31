@@ -2,6 +2,7 @@ import json
 from typing import Iterable, Callable, Any
 from datetime import datetime, timedelta
 from fractions import Fraction
+import dataclasses
 import typing
 
 NUMPY_SUPPORT_FLAG = True
@@ -65,7 +66,7 @@ def flatten(iterable: Iterable):
 
 
 class ExtendedJSONEncoder(json.JSONEncoder):
-    """Subclass for `json.JSONEncoder` making encoding of datetime and numpy arrays work.
+    """Subclass for `json.JSONEncoder` making encoding of datetime, dataclasses and numpy arrays work.
 
     Usage
     -----
@@ -77,6 +78,8 @@ class ExtendedJSONEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, datetime):
             return o.isoformat(timespec="seconds")
+        if dataclasses.is_dataclass(o):
+            return dataclasses.asdict(o)
 
         if NUMPY_SUPPORT_FLAG and type(o) in [np.int8, np.int16, np.int32, np.int64]:
             return int(o)
