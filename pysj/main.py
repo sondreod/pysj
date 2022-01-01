@@ -99,7 +99,10 @@ def _extended_JSON_decoder_object_hook(d):
                         v.startswith("20"),
                     ]
                 ):
-                    d[k] = datetime.fromisoformat(v)
+                    try:
+                        d[k] = datetime.fromisoformat(v)
+                    except ValueError:
+                        pass  # Invalid isoformat string, leave as is
     return d
 
 
