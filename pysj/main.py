@@ -20,6 +20,13 @@ class Timer:
         self.time = None
         self.start_time = time.perf_counter()
 
+    def __enter__(self):
+        print("Starting timer")
+        self.start()
+
+    def __exit__(self, *_):
+        print("Elapsed time", self.lap(), "s.")
+
     def start(self):
         self.time = time.perf_counter()
 
