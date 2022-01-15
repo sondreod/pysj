@@ -3,13 +3,40 @@ from typing import Iterable, Callable, Any
 from datetime import datetime, timedelta
 from fractions import Fraction
 import dataclasses
-import typing
+import time
 
 NUMPY_SUPPORT_FLAG = True
 try:
     import numpy as np
 except ImportError:
     NUMPY_SUPPORT_FLAG = False
+
+
+class Timer:
+    """Simple class working like a stopwatch."""
+
+    def __init__(self) -> None:
+
+        self.time = None
+        self.start_time = time.perf_counter()
+
+    def start(self):
+        self.time = time.perf_counter()
+
+    def reset(self):
+        end_time = self.lap()
+        self.start()
+        return end_time
+
+    def lap(self):
+        return time.perf_counter() - self.time
+
+    def split(self):
+        """Alias for lap"""
+        return self.lap()
+
+    def total(self):
+        return time.perf_counter() - self.start_time
 
 
 def seconds(

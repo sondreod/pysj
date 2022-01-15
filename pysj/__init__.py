@@ -2,5 +2,5 @@
 functions I find myself reimplementing in several projects."""
 __version__ = "0.1a3"
 
-from .main import ExtendedJSONEncoder, ExtendedJSONDecoder, flatten, seconds
+from .main import ExtendedJSONEncoder, ExtendedJSONDecoder, flatten, seconds, Timer
 from .crypto import sha256, sha1, md5, uuid
