@@ -18,7 +18,7 @@
         {
             "label": "prebuild",
             "type": "shell",
-            "command": "tox -e py38",
+            "command": "tox -e py39",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
