@@ -14,7 +14,15 @@ pip install pysj
 ```
 ### Usage
 ```python
-from pysj import sha256, ExtendedJSONEncoder
+from pysj import sha256, ExtendedJSONEncoder, Timer
+
+# Stopwatch
+>>> with Timer():
+>>>     # Do stuff
+>>>     sleep(1)
+Starting timer
+Elapsed time 1.0007134879997466 s.
+
 
 # Simple hashing
 print(sha256("test"))
@@ -32,6 +40,9 @@ json.dumps(
 Public classes and functions are importable from the top level package.
 
 ## Classes
+__`Timer`__
+Simple class working like a stopwatch.
+
 __`ExtendedJSONEncoder`__
 Subclass for `json.JSONEncoder` making encoding of datetime and numpy arrays work.
 
