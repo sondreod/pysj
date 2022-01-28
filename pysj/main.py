@@ -47,8 +47,8 @@ class Timer:
 
 
 def isotime(precision="d", dt=None):
-    """ Get the current date/time in isoformat. Default precision is date, accepts d(ay), (h)our, (m)inute, (s)econd.
-    A datetime object can be used with the _dt_ kwarg, is not, the current time is used """
+    """Get the current date/time in isoformat. Default precision is date, accepts d(ay), (h)our, (m)inute, (s)econd.
+    A datetime object can be used with the _dt_ kwarg, is not, the current time is used"""
     if not dt:
         dt = datetime.now()
     precision_map = {
