@@ -36,7 +36,7 @@ envlist = py{38,39}
 
 [testenv]
 deps = 
-    pytest >= 3.0.0, <4
+    pytest
     numpy
     black
 commands =

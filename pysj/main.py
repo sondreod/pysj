@@ -46,6 +46,21 @@ class Timer:
         return time.perf_counter() - self.start_time
 
 
+def isotime(precision="d", dt=None):
+    """ Get the current date/time in isoformat. Default precision is date, accepts d(ay), (h)our, (m)inute, (s)econd.
+    A datetime object can be used with the _dt_ kwarg, is not, the current time is used """
+    if not dt:
+        dt = datetime.now()
+    precision_map = {
+        "d": slice(0, 10),
+        "h": slice(0, 13),
+        "m": slice(0, 16),
+        "s": slice(0, 19),
+    }
+
+    return dt.isoformat()[precision_map.get(precision[0])]
+
+
 def seconds(
     days=0,
     seconds=0,
