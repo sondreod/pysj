@@ -1,5 +1,5 @@
 import json
-from typing import Iterable, Callable, Any
+from typing import Iterable, Callable, Any, Tuple
 from datetime import datetime, timedelta
 from fractions import Fraction
 import dataclasses
@@ -47,8 +47,8 @@ class Timer:
 
 
 def isotime(precision="d", dt=None):
-    """Get the current date/time in isoformat. Default precision is date, accepts d(ay), (h)our, (m)inute, (s)econd.
-    A datetime object can be used with the _dt_ kwarg, is not, the current time is used"""
+    """Get the current date/time in isoformat. Default precision is day, accepts d(ay), (h)our, (m)inute, (s)econd.
+    Per defualt the current time is used, this can be overriden by supplying a datetime object with the *dt* kwarg"""
     if not dt:
         dt = datetime.now()
     precision_map = {
@@ -166,3 +166,55 @@ class ConfigurableJSONTranscoder:
 
     def encoder():
         pass
+
+
+def paginate(
+    url: str,
+    pagesize=500,
+    data_attribute_name=None,
+    max_num_requests=10_000,
+    start_one=False,
+    offset_is_n_of_elements=False,
+):
+    n = -1
+    max_num_requests -= 1 #  Zero indexed
+    offset_multiplier = 1
+    if offset_is_n_of_elements:
+        offset_multiplier = pagesize
+    if start_one:
+        n = 0
+    last_response = "not_json"
+
+    def inner_page(data=None):
+        nonlocal n
+        if (
+            data := _extract_json_data(data, data_attribute_name)
+            and n < max_num_requests
+            and last_response != data
+        ):
+            n += 1
+            return url.replace("OFFSET", str(n * offset_multiplier)).replace(
+                "PAGESIZE", str(pagesize)
+            )
+
+    def _extract_json_data(data, data_attr=None):
+        """Extracts and returns items in json response, or False if there are no more items, returns True if data is None"""
+
+        if isinstance(data, dict):
+            if data.get("error"):
+                return False
+            if data_attr:
+                data = data.get(data_attr)
+            else:
+                data = data.get("data")
+                if not data:
+                    data = data.get("items")
+
+        if data is None:
+            return True
+        elif data:
+            return data
+        else:
+            return False
+
+    return inner_page
