@@ -1,6 +1,4 @@
-import pytest
 from pysj import paginate
-
 
 
 def test_paginated():

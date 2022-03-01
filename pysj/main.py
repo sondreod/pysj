@@ -177,7 +177,7 @@ def paginate(
     offset_is_n_of_elements=False,
 ):
     n = -1
-    max_num_requests -= 1 #  Zero indexed
+    max_num_requests -= 1  #  Zero indexed
     offset_multiplier = 1
     if offset_is_n_of_elements:
         offset_multiplier = pagesize
