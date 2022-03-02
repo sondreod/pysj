@@ -218,3 +218,26 @@ def paginate(
             return False
 
     return inner_page
+
+
+class MiniServiceClient:
+    """Simple client for consuming python software"""
+
+
+class MiniService:
+    """Simple server for exposing python software"""
+
+    def start(self):
+        print("Starting server")
+
+    def endpoint(self):
+        """Register a function to expose through the service"""
+
+        def wrap(f):
+            def wrapped_f(*args):
+                print(self)
+                return f(*args)
+
+            return wrapped_f
+
+        return wrap

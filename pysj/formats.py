@@ -17,7 +17,7 @@ all_image_extensions = {
 # fmt: on
 
 
-def _get_memetypes():
+def _get_memetypes_from_os():
     """Todo: maybe use this in a build step"""
     import mimetypes
 

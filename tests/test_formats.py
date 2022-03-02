@@ -1,10 +1,10 @@
 import pytest
-from pysj import formats
+from pysj.formats import common_image_extensions, all_image_extensions
 
 
 def test_common_formats():
 
-    assert formats.common_image_extensions == {
+    assert common_image_extensions == {
         "png",
         "jpg",
         "jpeg",
@@ -37,4 +37,4 @@ def test_common_formats():
 
 
 def test_all_image_formats():
-    len(formats.all_image_extensions) >= 119
+    len(all_image_extensions) >= 119
