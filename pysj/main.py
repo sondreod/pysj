@@ -1,9 +1,10 @@
+import dataclasses
+import functools
 import json
-from typing import Iterable, Callable, Any, Tuple
+import time
 from datetime import datetime, timedelta
 from fractions import Fraction
-import dataclasses
-import time
+from typing import Any, Callable, Iterable, Tuple
 
 NUMPY_SUPPORT_FLAG = True
 try:
@@ -227,17 +228,23 @@ class MiniServiceClient:
 class MiniService:
     """Simple server for exposing python software"""
 
+    functions = []
+
     def start(self):
         print("Starting server")
 
-    def endpoint(self):
+    def endpoint(self, func):
         """Register a function to expose through the service"""
 
-        def wrap(f):
-            def wrapped_f(*args):
-                print(self)
-                return f(*args)
 
-            return wrapped_f
+        @functools.wraps(func)
+        def wrapper_decorator(*args, **kwargs):
+            # Do something before
+            value = func(*args, **kwargs)
+            # Do something after
+            return value
+        return wrapper_decorator
 
-        return wrap
+
+
+        self.functions.append(wrap)
