@@ -236,15 +236,13 @@ class MiniService:
     def endpoint(self, func):
         """Register a function to expose through the service"""
 
-
         @functools.wraps(func)
         def wrapper_decorator(*args, **kwargs):
             # Do something before
             value = func(*args, **kwargs)
             # Do something after
             return value
+
         return wrapper_decorator
-
-
 
         self.functions.append(wrap)

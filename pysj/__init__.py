@@ -2,13 +2,13 @@
 functions I find myself reimplementing in several projects."""
 __version__ = "0.1a6"
 
+from .crypto import md5, sha1, sha256, uuid
 from .main import (
-    ExtendedJSONEncoder,
     ExtendedJSONDecoder,
-    flatten,
-    seconds,
+    ExtendedJSONEncoder,
     Timer,
+    flatten,
     isotime,
     paginate,
+    seconds,
 )
-from .crypto import sha256, sha1, md5, uuid

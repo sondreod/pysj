@@ -1,7 +1,9 @@
-import pytest
-from pysj import sha256, sha1, md5, uuid
-from pysj.crypto import ALPHABET
 import string
+
+import pytest
+
+from pysj import md5, sha1, sha256, uuid
+from pysj.crypto import ALPHABET
 
 
 @pytest.mark.parametrize(

@@ -1,6 +1,6 @@
 import hashlib
-from typing import Literal
 import uuid as _uuid
+from typing import Literal
 
 ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ" "abcdefghijkmnpqrstuvwxyz" "23456789"
 

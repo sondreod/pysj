@@ -1,9 +1,10 @@
-import json
 import datetime
+import json
 from dataclasses import dataclass
+
 import numpy as np
 
-from pysj import ExtendedJSONEncoder, ExtendedJSONDecoder
+from pysj import ExtendedJSONDecoder, ExtendedJSONEncoder
 
 
 def test_datetime_json_encoding():

@@ -1,5 +1,6 @@
 import pytest
-from pysj.formats import common_image_extensions, all_image_extensions
+
+from pysj.formats import all_image_extensions, common_image_extensions
 
 
 def test_common_formats():

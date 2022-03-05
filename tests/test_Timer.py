@@ -1,7 +1,9 @@
-from pytest import approx
-import pytest
-from pysj import Timer
 from time import sleep
+
+import pytest
+from pytest import approx
+
+from pysj import Timer
 
 
 def test_lap_timing():
