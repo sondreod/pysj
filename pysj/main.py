@@ -2,8 +2,8 @@ import dataclasses
 import functools
 import json
 import os
-import socket
 import select
+import socket
 import sys
 import time
 from datetime import datetime, timedelta
