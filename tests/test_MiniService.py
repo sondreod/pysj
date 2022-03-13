@@ -1,12 +1,5 @@
-from pysj.main import MiniService, MiniServiceClient
+from pysj.main import MiniServiceClient
 
-service = MiniService()
-
-
-@service.endpoint()
-def func(*args, **kwargs):
-    return args, kwargs
-
-
-print(func("lol", lolz="kek"))
-service.start()
+client = MiniServiceClient()
+client.lolzra("hei", lo="ke")
+client.query("hei", lo="ke")

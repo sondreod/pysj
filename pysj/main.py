@@ -1,6 +1,10 @@
 import dataclasses
 import functools
 import json
+import os
+import socket
+import select
+import sys
 import time
 from datetime import datetime, timedelta
 from fractions import Fraction
@@ -177,13 +181,31 @@ def paginate(
     start_one=False,
     offset_is_n_of_elements=False,
 ):
+    """Function returning a function yielding new urls if the data seems valid
+
+    Usage
+    -----
+
+        get_url = paginate("lol.lol?offset=OFFSET&pagesize=PAGESIZE", max_num_requests=20, start_one=False)
+
+        data = None
+        while url := get_url(data):
+            data = requests.get(url)
+            # Do someting with the data, get_url will yield a new url a long as data is set to
+            # someting looking like a valid json response without an error attribute,
+            # and as long the data always change beetween iterations.
+
+    """
     n = -1
-    max_num_requests -= 1  #  Zero indexed
     offset_multiplier = 1
     if offset_is_n_of_elements:
         offset_multiplier = pagesize
+
     if start_one:
         n = 0
+    else:
+        max_num_requests -= 1  #  Zero indexed
+
     last_response = "not_json"
 
     def inner_page(data=None):
@@ -207,8 +229,9 @@ def paginate(
             if data_attr:
                 data = data.get(data_attr)
             else:
-                data = data.get("data")
-                if not data:
+                if data.get("data"):
+                    data = data.get("data")
+                elif data.get("items"):
                     data = data.get("items")
 
         if data is None:
@@ -222,27 +245,114 @@ def paginate(
 
 
 class MiniServiceClient:
-    """Simple client for consuming python software"""
+    """Simple client for consuming python software from multiple threads/processes"""
+
+    def __getattr__(self, name):
+        if name not in self.__dict__:
+
+            def gen(*args, **kwargs):
+                print(name, args, kwargs)
+
+            return gen
+        return super().__getattr__(name)
+
+    def query(self, name, *args, **kwargs):
+        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        server_address = "./uds_socket"
+        print("connecting to {}".format(server_address))
+        try:
+            sock.connect(server_address)
+        except socket.error as msg:
+            print(msg)
+            sys.exit(1)
+
+        try:
+
+            message = b"This is the message.  It will be repeated."
+            print("sending {!r}".format(message))
+            sock.sendall(message)
+            while True:
+                data = self._recv_timeout(sock, 2048, 1)
+                if data:
+                    print("received {!r}".format(data))
+                else:
+                    print("no data")
+                    break
+
+        finally:
+            print("closing socket")
+            sock.close()
+
+    @staticmethod
+    def _recv_timeout(sock, bytes_to_read, timeout_seconds):
+        sock.setblocking(0)
+        ready = select.select([sock], [], [], timeout_seconds)
+        if ready[0]:
+            return sock.recv(bytes_to_read)
+
+        raise socket.timeout()
 
 
 class MiniService:
     """Simple server for exposing python software"""
 
-    functions = []
+    functions = dict()
 
     def start(self):
         print("Starting server")
+        for f in self.functions:
+            print(f"Registered f: {f}")
 
-    def endpoint(self, func):
+        server_address = "./uds_socket"
+
+        try:
+            os.unlink(server_address)
+        except OSError:
+            if os.path.exists(server_address):
+                raise
+
+        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+
+        print("starting up on {}".format(server_address))
+        sock.bind(server_address)
+
+        sock.listen()
+
+        while True:
+            print("waiting for a connection")
+            connection, client_address = sock.accept()
+            try:
+                print("connection from", client_address)
+
+                while True:
+                    data = connection.recv(2048)
+                    print("received {!r}".format(data))
+                    if data:
+                        print("sending data back to the client")
+                        connection.sendall(data)
+                    else:
+                        print("no data from", client_address)
+                        break
+
+            finally:
+                connection.close()
+
+    def endpoint(self):
         """Register a function to expose through the service"""
 
-        @functools.wraps(func)
-        def wrapper_decorator(*args, **kwargs):
-            # Do something before
-            value = func(*args, **kwargs)
-            # Do something after
-            return value
+        def wrap(func):
+            self.functions[func.__name__] = func
+            return func
 
-        return wrapper_decorator
+        return wrap
 
-        self.functions.append(wrap)
+
+if __name__ == "__main__":
+
+    service = MiniService()
+
+    @service.endpoint()
+    def echo(s):
+        return s
+
+    service.start()

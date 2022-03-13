@@ -39,7 +39,9 @@ deps =
     pytest
     numpy
     black
+    isort
 commands =
     black .
+    isort .
     pytest
 """
