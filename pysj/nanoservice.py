@@ -28,10 +28,9 @@ class NanoServiceClient:
 
     def __query(self, name, args, kwargs):
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        server_address = socket_filepath
-        log.debug("connecting to {}".format(server_address))
+        log.debug("connecting to {}".format(socket_filepath))
         try:
-            sock.connect(server_address)
+            sock.connect(socket_filepath)
         except socket.error as error:
             log.error(error)
             sys.exit(1)
@@ -75,18 +74,16 @@ class NanoService:
         for f in self.functions:
             log.debug(f"Registered f: {f}")
 
-        server_address = socket_filepath
-
         try:
-            os.unlink(server_address)
+            os.unlink(socket_filepath)
         except OSError:
-            if os.path.exists(server_address):
+            if os.path.exists(socket_filepath):
                 raise
 
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
-        log.debug("starting up on {}".format(server_address))
-        sock.bind(server_address)
+        log.debug("starting up on {}".format(socket_filepath))
+        sock.bind(socket_filepath)
 
         sock.listen()
 

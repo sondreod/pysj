@@ -2,6 +2,7 @@ import dataclasses
 import functools
 import json
 import os
+import pickle
 import select
 import socket
 import sys
@@ -244,14 +245,14 @@ def paginate(
     return inner_page
 
 
-class MiniServiceClient:
+class NanoClient:
     """Simple client for consuming python software from multiple threads/processes"""
 
     def __getattr__(self, name):
         if name not in self.__dict__:
 
             def gen(*args, **kwargs):
-                print(name, args, kwargs)
+                return self.query(name, args, kwargs)
 
             return gen
         return super().__getattr__(name)
@@ -268,16 +269,18 @@ class MiniServiceClient:
 
         try:
 
-            message = b"This is the message.  It will be repeated."
+            message = pickle.dumps((name, args, kwargs))
             print("sending {!r}".format(message))
             sock.sendall(message)
+            data = None
             while True:
                 data = self._recv_timeout(sock, 2048, 1)
                 if data:
-                    print("received {!r}".format(data))
+                    print("received {!r}".format(pickle.loads(data)))
                 else:
-                    print("no data")
+                    print("no more data")
                     break
+            return data
 
         finally:
             print("closing socket")
@@ -290,10 +293,11 @@ class MiniServiceClient:
         if ready[0]:
             return sock.recv(bytes_to_read)
 
+        return None
         raise socket.timeout()
 
 
-class MiniService:
+class NanoService:
     """Simple server for exposing python software"""
 
     functions = dict()
@@ -326,10 +330,15 @@ class MiniService:
 
                 while True:
                     data = connection.recv(2048)
-                    print("received {!r}".format(data))
                     if data:
                         print("sending data back to the client")
-                        connection.sendall(data)
+                        function, args, kwargs = pickle.loads(data)
+                        func = self.functions.get(function)
+                        print(len(args), len(kwargs))
+                        output = func(*args)
+                        print(output)
+
+                        connection.sendall(pickle.dumps(output))
                     else:
                         print("no data from", client_address)
                         break
@@ -349,7 +358,7 @@ class MiniService:
 
 if __name__ == "__main__":
 
-    service = MiniService()
+    service = NanoService()
 
     @service.endpoint()
     def echo(s):

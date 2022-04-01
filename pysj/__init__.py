@@ -5,3 +5,4 @@ __version__ = "0.1a7"
 from .crypto import md5, sha1, sha256, uuid
 from .main import (ExtendedJSONDecoder, ExtendedJSONEncoder, Timer, flatten,
                    isotime, paginate, seconds)
+from .nanoservice import NanoService, NanoServiceClient
