@@ -28,3 +28,12 @@ def test_uuid_alpha_generation():
 
 def test_uuid_int_generation():
     assert isinstance(uuid("int"), int)
+
+
+def test_force_mutable():
+    assert sha256([1, 2, 3], force_mutable=True) == sha256("[1, 2, 3]")
+
+
+def test_force_mutable_error_when_flag_is_false():
+    with pytest.raises(AttributeError):
+        assert sha256([1, 2, 3])
