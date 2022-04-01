@@ -93,6 +93,12 @@ class SchedulableProcess:
 
 
 class OverEngineer:
+    """
+    TODO:
+    - systemd service script that makes file paths to file/console
+    - script entrypoint to script creating systemd unitfile
+    """
+
     def __init__(self):
         self.accepted_webhooks = Queue()
 

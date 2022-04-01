@@ -1,11 +1,5 @@
 import dataclasses
-import functools
 import json
-import os
-import pickle
-import select
-import socket
-import sys
 import time
 from datetime import datetime, timedelta
 from fractions import Fraction
@@ -194,7 +188,7 @@ def paginate(
             data = requests.get(url)
             # Do someting with the data, get_url will yield a new url a long as data is set to
             # someting looking like a valid json response without an error attribute,
-            # and as long the data always change beetween iterations.
+            # and as long the data don't repeat.
 
     """
     n = -1
@@ -243,125 +237,3 @@ def paginate(
             return False
 
     return inner_page
-
-
-class NanoClient:
-    """Simple client for consuming python software from multiple threads/processes"""
-
-    def __getattr__(self, name):
-        if name not in self.__dict__:
-
-            def gen(*args, **kwargs):
-                return self.query(name, args, kwargs)
-
-            return gen
-        return super().__getattr__(name)
-
-    def query(self, name, *args, **kwargs):
-        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        server_address = "./uds_socket"
-        print("connecting to {}".format(server_address))
-        try:
-            sock.connect(server_address)
-        except socket.error as msg:
-            print(msg)
-            sys.exit(1)
-
-        try:
-
-            message = pickle.dumps((name, args, kwargs))
-            print("sending {!r}".format(message))
-            sock.sendall(message)
-            data = None
-            while True:
-                data = self._recv_timeout(sock, 2048, 1)
-                if data:
-                    print("received {!r}".format(pickle.loads(data)))
-                else:
-                    print("no more data")
-                    break
-            return data
-
-        finally:
-            print("closing socket")
-            sock.close()
-
-    @staticmethod
-    def _recv_timeout(sock, bytes_to_read, timeout_seconds):
-        sock.setblocking(0)
-        ready = select.select([sock], [], [], timeout_seconds)
-        if ready[0]:
-            return sock.recv(bytes_to_read)
-
-        return None
-        raise socket.timeout()
-
-
-class NanoService:
-    """Simple server for exposing python software"""
-
-    functions = dict()
-
-    def start(self):
-        print("Starting server")
-        for f in self.functions:
-            print(f"Registered f: {f}")
-
-        server_address = "./uds_socket"
-
-        try:
-            os.unlink(server_address)
-        except OSError:
-            if os.path.exists(server_address):
-                raise
-
-        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-
-        print("starting up on {}".format(server_address))
-        sock.bind(server_address)
-
-        sock.listen()
-
-        while True:
-            print("waiting for a connection")
-            connection, client_address = sock.accept()
-            try:
-                print("connection from", client_address)
-
-                while True:
-                    data = connection.recv(2048)
-                    if data:
-                        print("sending data back to the client")
-                        function, args, kwargs = pickle.loads(data)
-                        func = self.functions.get(function)
-                        print(len(args), len(kwargs))
-                        output = func(*args)
-                        print(output)
-
-                        connection.sendall(pickle.dumps(output))
-                    else:
-                        print("no data from", client_address)
-                        break
-
-            finally:
-                connection.close()
-
-    def endpoint(self):
-        """Register a function to expose through the service"""
-
-        def wrap(func):
-            self.functions[func.__name__] = func
-            return func
-
-        return wrap
-
-
-if __name__ == "__main__":
-
-    service = NanoService()
-
-    @service.endpoint()
-    def echo(s):
-        return s
-
-    service.start()
