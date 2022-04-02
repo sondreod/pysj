@@ -27,6 +27,7 @@ coverage = {}
 numpy = {}
 tox = {}
 flit = {}
+doit = {}
 
 [tool.tox]
 legacy_tox_ini = """
