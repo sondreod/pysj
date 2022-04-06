@@ -33,7 +33,7 @@ class NanoServiceClient:
             sock.connect(socket_filepath)
         except socket.error as error:
             log.error(error)
-            sys.exit(1)
+            raise socket.error(error)
 
         try:
 
@@ -45,10 +45,10 @@ class NanoServiceClient:
                 if incomming_data := self._recv_timeout(sock, 2048, timeout):
                     data += incomming_data
                     timeout = 0.01
-                    log.debug("received {!r}".format(pickle.loads(data)))
+                    log.debug(f"received {len(data)} bytes")
                 else:
                     break
-            return data
+            return pickle.loads(data)
 
         finally:
             log.debug("closing socket")
@@ -80,26 +80,23 @@ class NanoService:
             if os.path.exists(socket_filepath):
                 raise
 
-        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-
         log.debug("starting up on {}".format(socket_filepath))
-        sock.bind(socket_filepath)
 
+        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        sock.bind(socket_filepath)
         sock.listen()
 
         while True:
             log.debug("waiting for a connection")
             connection, client_address = sock.accept()
             try:
-                log.debug("connection from", client_address)
-
+                log.debug("connection received")
                 while True:
                     data = connection.recv(2048)
                     if data:
                         function, args, kwargs = pickle.loads(data)
                         func = self.functions.get(function)
                         output = func(*args, **kwargs)
-                        sleep(1)
                         connection.sendall(pickle.dumps(output))
                     else:
                         break
@@ -122,7 +119,7 @@ if __name__ == "__main__":
     service = NanoService()
 
     @service.endpoint()
-    def echo(s):
-        return s * 4
+    def double(s):
+        return s * 2
 
     service.start()
