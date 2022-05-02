@@ -12,12 +12,13 @@ logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
 
 
-
 class NanoServiceClient:
     """Simple client for consuming python software from multiple threads/processes"""
 
     def __init__(self, socket_filepath="nanoservice"):
-        self.socket_filepath = str(Path(f"~/.{socket_filepath}.sock").expanduser().absolute())
+        self.socket_filepath = str(
+            Path(f"~/.{socket_filepath}.sock").expanduser().absolute()
+        )
 
     def __getattr__(self, name):
         if name not in self.__dict__:
@@ -70,7 +71,9 @@ class NanoService:
     """Simple server for exposing python software"""
 
     def __init__(self, socket_filepath="nanoservice"):
-        self.socket_filepath = str(Path(f"~/.{socket_filepath}.sock").expanduser().absolute())
+        self.socket_filepath = str(
+            Path(f"~/.{socket_filepath}.sock").expanduser().absolute()
+        )
 
     functions = dict()
 
