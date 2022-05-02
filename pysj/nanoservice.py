@@ -11,11 +11,13 @@ from typing import Any, Callable, Iterable, Tuple
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
 
-socket_filepath = str(Path("~/.nanoservice.sock").expanduser().absolute())
 
 
 class NanoServiceClient:
     """Simple client for consuming python software from multiple threads/processes"""
+
+    def __init__(self, socket_filepath="nanoservice"):
+        self.socket_filepath = str(Path(f"~/.{socket_filepath}.sock").expanduser().absolute())
 
     def __getattr__(self, name):
         if name not in self.__dict__:
@@ -28,9 +30,9 @@ class NanoServiceClient:
 
     def __query(self, name, args, kwargs):
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        log.debug("connecting to {}".format(socket_filepath))
+        log.debug("connecting to {}".format(self.socket_filepath))
         try:
-            sock.connect(socket_filepath)
+            sock.connect(self.socket_filepath)
         except socket.error as error:
             log.error(error)
             raise socket.error(error)
@@ -67,6 +69,9 @@ class NanoServiceClient:
 class NanoService:
     """Simple server for exposing python software"""
 
+    def __init__(self, socket_filepath="nanoservice"):
+        self.socket_filepath = str(Path(f"~/.{socket_filepath}.sock").expanduser().absolute())
+
     functions = dict()
 
     def start(self):
@@ -75,34 +80,40 @@ class NanoService:
             log.debug(f"Registered f: {f}")
 
         try:
-            os.unlink(socket_filepath)
+            os.unlink(self.socket_filepath)
         except OSError:
-            if os.path.exists(socket_filepath):
+            if os.path.exists(self.socket_filepath):
                 raise
 
-        log.debug("starting up on {}".format(socket_filepath))
+        log.debug("starting up on {}".format(self.socket_filepath))
 
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        sock.bind(socket_filepath)
+        sock.bind(self.socket_filepath)
         sock.listen()
 
-        while True:
-            log.debug("waiting for a connection")
-            connection, client_address = sock.accept()
-            try:
-                log.debug("connection received")
-                while True:
-                    data = connection.recv(2048)
-                    if data:
-                        function, args, kwargs = pickle.loads(data)
-                        func = self.functions.get(function)
-                        output = func(*args, **kwargs)
-                        connection.sendall(pickle.dumps(output))
-                    else:
-                        break
+        try:
+            while True:
+                log.debug("waiting for a connection")
+                connection, client_address = sock.accept()
+                try:
+                    log.debug("connection received")
+                    while True:
+                        data = connection.recv(2048)
+                        if data:
+                            function, args, kwargs = pickle.loads(data)
+                            func = self.functions.get(function)
+                            output = func(*args, **kwargs)
+                            connection.sendall(pickle.dumps(output))
+                        else:
+                            break
 
-            finally:
-                connection.close()
+                finally:
+                    connection.close()
+        finally:
+            try:
+                os.unlink(self.socket_filepath)
+            except OSError:
+                pass
 
     def endpoint(self):
         """Register a function to expose through the service"""
