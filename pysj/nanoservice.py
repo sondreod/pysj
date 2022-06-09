@@ -40,31 +40,15 @@ class NanoServiceClient:
 
         try:
 
-            message = pickle.dumps((name, args, kwargs))
-            sock.sendall(message)
-            data = b""
-            timeout = 10  # TODO: Implement a simple protocol with packet length so timeout can be removed
-            while True:
-                if incomming_data := self._recv_timeout(sock, 2048, timeout):
-                    data += incomming_data
-                    timeout = 0.01
-                    log.debug(f"received {len(data)} bytes")
-                else:
-                    break
+            data = pickle.dumps((name, args, kwargs))
+            sock.sendall(str(len(data)).zfill(10).encode("utf-8") + data)
+            packet_length = int(sock.recv(10))
+            data = sock.recv(packet_length)
             return pickle.loads(data)
 
         finally:
             log.debug("closing socket")
             sock.close()
-
-    @staticmethod
-    def _recv_timeout(sock, bytes_to_read, timeout_seconds):
-        sock.setblocking(0)
-        ready = select.select([sock], [], [], timeout_seconds)
-        if ready[0]:
-            return sock.recv(bytes_to_read)
-
-        return None
 
 
 class NanoService:
@@ -100,15 +84,14 @@ class NanoService:
                 connection, client_address = sock.accept()
                 try:
                     log.debug("connection received")
-                    while True:
-                        data = connection.recv(2048)
-                        if data:
-                            function, args, kwargs = pickle.loads(data)
-                            func = self.functions.get(function)
-                            output = func(*args, **kwargs)
-                            connection.sendall(pickle.dumps(output))
-                        else:
-                            break
+                    packet_length = int(connection.recv(10))
+                    data = connection.recv(packet_length)
+
+                    function, args, kwargs = pickle.loads(data)
+                    func = self.functions.get(function)
+                    output = func(*args, **kwargs)
+                    data = pickle.dumps(output)
+                    connection.sendall(str(len(data)).zfill(10).encode("utf-8") + data)
 
                 finally:
                     connection.close()
