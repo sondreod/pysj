@@ -85,7 +85,9 @@ class NanoService:
                 try:
                     log.debug("connection received")
                     packet_length = int(connection.recv(10))
-                    data = connection.recv(packet_length)
+                    data = b""
+                    while len(data) < packet_length:
+                        data += connection.recv(2048)
 
                     function, args, kwargs = pickle.loads(data)
                     func = self.functions.get(function)
