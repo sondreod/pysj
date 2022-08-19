@@ -96,6 +96,7 @@ class OverEngineer:
     TODO:
     - systemd service script that makes file paths to file/console
     - script entrypoint to script creating systemd unitfile
+    - accept a file or folder to watch for changes, then run a task
     """
 
     def __init__(self):
