@@ -1,7 +1,7 @@
 import dataclasses
 import json
 import time
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from fractions import Fraction
 from typing import Any, Callable, Iterable, Tuple
 
@@ -92,7 +92,7 @@ def seconds(
     )
 
 
-def flatten(iterable: Iterable):
+def flatten(iterable: Iterable) -> list:
     """Recursively flattens an iterable (depth first)
 
     Usage
@@ -127,6 +127,8 @@ class ExtendedJSONEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, datetime):
             return o.isoformat(timespec="seconds")
+        if isinstance(o, date):
+            return o.isoformat()
         if dataclasses.is_dataclass(o):
             return dataclasses.asdict(o)
 
@@ -199,7 +201,7 @@ def paginate(
     if start_one:
         n = 0
     else:
-        max_num_requests -= 1  #  Zero indexed
+        max_num_requests -= 1  # Zero indexed
 
     last_response = "not_json"
 

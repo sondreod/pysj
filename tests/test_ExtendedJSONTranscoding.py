@@ -7,6 +7,16 @@ import numpy as np
 from pysj import ExtendedJSONDecoder, ExtendedJSONEncoder
 
 
+def test_date_json_encoding():
+
+    test = json.dumps(
+        {"lol": datetime.date(2021, 12, 1)},
+        cls=ExtendedJSONEncoder,
+    )
+
+    assert test == '{"lol": "2021-12-01"}'
+
+
 def test_datetime_json_encoding():
 
     test = json.dumps(
