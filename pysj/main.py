@@ -3,7 +3,8 @@ import json
 import time
 from datetime import date, datetime, timedelta
 from fractions import Fraction
-from typing import Any, Callable, Iterable, Tuple
+from itertools import tee
+from typing import Any, Callable, Iterable, List, Tuple
 
 NUMPY_SUPPORT_FLAG = True
 try:
@@ -114,6 +115,12 @@ def flatten(iterable: Iterable) -> list:
     return list(_recursively_flatten(iterable))
 
 
+def transpose(iterable: Iterable[Iterable]) -> List[List]:
+    """Transpose a list of lists with dimensions X=Y."""
+
+    return [list(x) for x in zip(*iterable)]
+
+
 class ExtendedJSONEncoder(json.JSONEncoder):
     """Subclass for `json.JSONEncoder` making encoding of datetime, dataclasses and numpy arrays work.
 
@@ -163,10 +170,10 @@ class ExtendedJSONDecoder(json.JSONDecoder):
 
 
 class ConfigurableJSONTranscoder:
-    def decoder():
+    def decoder(self):
         pass
 
-    def encoder():
+    def encoder(self):
         pass
 
 
@@ -239,3 +246,30 @@ def paginate(
             return False
 
     return inner_page
+
+
+def n_wise(n: int, data: Iterable):
+    """Yields *n* items from data like a gliding window, as long as there is enough elements in data to yield the full window.
+    If n == 3, and data = (1,2,3,4,5) the following items are yielded: (1,2,3), (2,3,4), (3,4,5).
+
+    Like itertools.pairwise, but generalized to *n* items.
+    """
+    iterators = tee(
+        data, n
+    )  # Using tee on generators is not a good idéa if they are consumed very ,  as all the intermidiate items must be cached.
+
+    for i, iterator in enumerate(iterators):
+        for _ in range(
+            i
+        ):  # But in this case the tee'd generators are never more out of sync than the length of the window (*n*)
+            next(iterator, None)
+
+    return zip(*iterators)
+
+
+def triplewise(data: Iterable):
+    return n_wise(3, data)
+
+
+def moving_average(window_size, data):
+    yield from (sum(x) / window_size for x in n_wise(window_size, data))
