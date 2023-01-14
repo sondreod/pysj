@@ -1,7 +1,7 @@
 import hashlib
 import json
 import uuid as _uuid
-from typing import Literal
+from typing import Literal, Union
 
 ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ" "abcdefghijkmnpqrstuvwxyz" "23456789"
 
@@ -41,14 +41,14 @@ def __force_mutable(plaintext):
     return plaintext
 
 
-def uuid(type: Literal["alpha", "int"] = None, length: int = None) -> str:
+def uuid(type: Literal["alpha", "int"] = None, length: int = None) -> Union[str, int]:
     if length:
         raise NotImplementedError("Not implemented yet")
     if type == "alpha":
         alphabet: str = ALPHABET
         number: int = _uuid.uuid4().int
-        output: str = ""
-        length: int = len(alphabet)
+        output = ""
+        length = len(alphabet)
         while number:
             number, digit = divmod(number, length)
             output += alphabet[digit]
