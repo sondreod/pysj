@@ -1,5 +1,3 @@
-from time import sleep
-
 import pytest
 from pytest import approx
 

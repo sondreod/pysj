@@ -3,7 +3,7 @@ import json
 import time
 from datetime import date, datetime, timedelta
 from fractions import Fraction
-from itertools import tee
+from itertools import islice, tee, zip_longest
 from typing import Any, Callable, Iterable, List, Tuple
 
 NUMPY_SUPPORT_FLAG = True
@@ -256,7 +256,7 @@ def n_wise(n: int, data: Iterable):
     """
     iterators = tee(
         data, n
-    )  # Using tee on generators is not a good idéa if they are consumed very ,  as all the intermidiate items must be cached.
+    )  # Using tee on generators is not a good idéa if they are consumed very out of sync,  as all the intermidiate items must be cached.
 
     for i, iterator in enumerate(iterators):
         for _ in range(
@@ -271,5 +271,22 @@ def triplewise(data: Iterable):
     return n_wise(3, data)
 
 
-def moving_average(window_size, data):
+def moving_average(window_size: int, data: Iterable):
     yield from (sum(x) / window_size for x in n_wise(window_size, data))
+
+
+def take(n: int, iterable: Iterable):
+    """Return first n items of the *iterable*"""
+    return islice(iterable, n)
+
+
+def first(iterable: Iterable):
+    """Return first item of the *iterable*"""
+    iterable_ = iter(iterable)
+    return next(iterable_)
+
+
+def chunk(n, iterable: Iterable, fillvalue=None):
+    """Yields chunks of size *n* from *iterable*. Last chunk are filled with *fillvalue* if size of *iterable* is not a multiple of *n*."""
+    args = [iter(iterable)] * n
+    return zip_longest(*args, fillvalue=fillvalue)
