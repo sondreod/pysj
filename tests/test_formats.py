@@ -4,7 +4,6 @@ from pysj.formats import all_image_extensions, common_image_extensions
 
 
 def test_common_formats():
-
     assert common_image_extensions == {
         "png",
         "jpg",

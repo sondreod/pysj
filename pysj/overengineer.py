@@ -48,7 +48,6 @@ def webhook_server(accepted_webhooks):
 
 class SchedulableProcess:
     def __init__(self, target=None, args=None, name=None, **kwargs):
-
         self.target = target
         self.args = args if args else ()
         self.triggers = kwargs

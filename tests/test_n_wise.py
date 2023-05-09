@@ -7,7 +7,6 @@ test_data = (1, 2, 3, 4, 5, 6)
 
 
 def test_n_wise_2_comp_pairwise():
-
     try:
         from itertools import pairwise
 

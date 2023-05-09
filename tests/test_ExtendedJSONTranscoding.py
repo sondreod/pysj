@@ -8,7 +8,6 @@ from pysj import ExtendedJSONDecoder, ExtendedJSONEncoder
 
 
 def test_date_json_encoding():
-
     test = json.dumps(
         {"lol": datetime.date(2021, 12, 1)},
         cls=ExtendedJSONEncoder,
@@ -18,7 +17,6 @@ def test_date_json_encoding():
 
 
 def test_datetime_json_encoding():
-
     test = json.dumps(
         {"lol": datetime.datetime.fromisoformat("2021-12-01T04:50:00.123456")},
         cls=ExtendedJSONEncoder,
@@ -28,7 +26,6 @@ def test_datetime_json_encoding():
 
 
 def test_datetime_json_decoding():
-
     test = json.loads(
         '{"lol": "2021-12-01T04:50:00"}',
         cls=ExtendedJSONDecoder,
@@ -38,7 +35,6 @@ def test_datetime_json_decoding():
 
 
 def test_numpy_serialization():
-
     test = json.dumps(
         [1, 2, 3, np.int64(10), np.int8(11), np.int32(12)],
         cls=ExtendedJSONEncoder,

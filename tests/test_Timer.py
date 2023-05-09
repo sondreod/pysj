@@ -7,7 +7,6 @@ from pysj import Timer
 
 
 def test_lap_timing():
-
     timer = Timer()
 
     timer.start()
@@ -20,7 +19,6 @@ def test_lap_timing():
 
 
 def test_reset_timing():
-
     timer = Timer()
 
     timer.start()
@@ -32,7 +30,6 @@ def test_reset_timing():
 
 
 def test_use_as_contextmanager(capsys):
-
     with Timer():
         sleep(0.1)
 

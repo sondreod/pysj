@@ -11,7 +11,6 @@ test_data = [
 
 
 def test_transpose():
-
     assert transpose(test_data) == list(
         map(lambda x: [x] * len(test_data[0]), range(1, len(test_data) + 1))
     )
