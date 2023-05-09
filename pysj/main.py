@@ -132,6 +132,7 @@ class ExtendedJSONEncoder(json.JSONEncoder):
     """
 
     def default(self, o):
+        # TODO: Support Decimal type
         if isinstance(o, datetime):
             return o.isoformat(timespec="seconds")
         if isinstance(o, date):
