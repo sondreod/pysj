@@ -4,7 +4,8 @@ import time
 from datetime import date, datetime, timedelta
 from fractions import Fraction
 from itertools import islice, tee, zip_longest
-from typing import Any, Callable, Iterable, List, Tuple
+from typing import (Any, Callable, Iterable, List, Literal, Optional, Tuple,
+                    Union)
 
 NUMPY_SUPPORT_FLAG = True
 try:
@@ -17,7 +18,6 @@ class Timer:
     """Simple class working like a stopwatch."""
 
     def __init__(self) -> None:
-
         self.time = None
         self.start_time = time.perf_counter()
 
@@ -49,7 +49,8 @@ class Timer:
 
 def isotime(precision="d", dt=None):
     """Get the current date/time in isoformat. Default precision is day, accepts d(ay), (h)our, (m)inute, (s)econd.
-    Per defualt the current time is used, this can be overriden by supplying a datetime object with the *dt* kwarg"""
+    Per defualt the current time is used, this can be overriden by supplying a datetime object with the *dt* kwarg
+    """
     if not dt:
         dt = datetime.now()
     precision_map = {
@@ -91,6 +92,30 @@ def seconds(
             days, seconds, microseconds, milliseconds, minutes, hours, weeks
         ).total_seconds()
     )
+
+
+def months_in_interval(
+    start: datetime,
+    end: Optional[datetime] = None,
+):
+    """Yields months and year from the given interval (start -> end).
+
+    start: datetime
+        Start of interval
+    end: datetime
+        Optional, end of interval. Todays date is used if end is not set.
+
+    return: Iterable[Tuple[int, int]]
+    """
+    if end is None:
+        end = datetime.today()
+
+    dt = datetime(start.year, start.month, 1)
+    while dt <= datetime(end.year, end.month, 1):
+        yield dt.month, dt.year
+
+        dt = dt + timedelta(days=40)
+        dt = datetime(dt.year, dt.month, 1)
 
 
 def flatten(iterable: Iterable) -> list:
