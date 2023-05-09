@@ -16,7 +16,15 @@ def test_number_of_periods_inclusive_on_both_ends():
     assert periods[-1] == (4, 2023)
 
 
-def test_number_of_periods_with_leap_year():
+def test_months_in_interval_with_period_equal_one_day():
+    periods = list(
+        months_in_interval(datetime.datetime(2023, 1, 1), datetime.datetime(2023, 1, 1))
+    )
+
+    assert periods == [(1, 2023)]
+
+
+def test_months_in_interval_with_leap_year():
     periods = list(
         months_in_interval(
             datetime.datetime(1999, 12, 31), datetime.datetime(2000, 2, 29)
