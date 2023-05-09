@@ -7,7 +7,7 @@ def task_format():
 
 def task_test():
     return {
-        "actions": ["tox -e py39"],
+        "actions": ["tox -e py310"],
         "verbosity": 2,
     }
 
