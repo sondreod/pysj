@@ -1,5 +1,6 @@
 import dataclasses
 import json
+import math
 import time
 from datetime import date, datetime, timedelta
 from fractions import Fraction
@@ -316,3 +317,30 @@ def chunk(n, iterable: Iterable, fillvalue=None):
     """Yields chunks of size *n* from *iterable*. Last chunk are filled with *fillvalue* if size of *iterable* is not a multiple of *n*."""
     args = [iter(iterable)] * n
     return zip_longest(*args, fillvalue=fillvalue)
+
+
+class Point:
+    def __init__(
+        self,
+        x: int | float | None = None,
+        y: int | float | None = None,
+        z: int | float | None = None,
+    ):
+        self.x = x
+        self.y = y
+        self.z = z
+
+        self.vector = tuple(s for s in [x, y, z] if s is not None)
+        self.dimensions = self.axis = len(self.vector)
+
+    def __str__(self):
+        return f"Point({', '.join(map(str, self.vector))})"
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __abs__(self):
+        return math.dist(tuple(0 for s in self.vector), self.vector)
+
+    def __hash__(self):
+        return hash(str(list(map(float, self.vector))))
