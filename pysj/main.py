@@ -16,6 +16,51 @@ except ImportError:
     NUMPY_SUPPORT_FLAG = False
 
 
+class PythonVersion:
+    def __init__(self, value=None):
+        if not value:
+            self.version = sys.version_info[:2]
+        else:
+            if isinstance(value, str):
+                self.version = tuple(map(int, value.split(".")))
+            elif isinstance(value, int):
+                self.version = tuple(map(int, (str(value)[0], str(value)[1:])))
+        self.version_string = ".".join(map(str, self.version))
+
+    def __str__(self):
+        return self.version_string
+
+    def __repr__(self):
+        return f"{type(self)} {self.version_string}"
+
+    def __eq__(self, other):
+        return self.version == PythonVersion(other).version
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __ge__(self, other):
+        return self._convert_version_to_int(self) >= self._convert_version_to_int(other)
+
+    def __gt__(self, other):
+        return self._convert_version_to_int(self) > self._convert_version_to_int(other)
+
+    def __le__(self, other):
+        return self._convert_version_to_int(self) <= self._convert_version_to_int(other)
+
+    def __lt__(self, other):
+        return self._convert_version_to_int(self) < self._convert_version_to_int(other)
+
+    @staticmethod
+    def _convert_version_to_int(value):
+        if not isinstance(value, PythonVersion):
+            value = PythonVersion(value)
+        return value.version[0] * 100 + value.version[1]
+
+
+py = PythonVersion()
+
+
 class Timer:
     """Simple class working like a stopwatch."""
 
