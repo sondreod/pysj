@@ -33,7 +33,7 @@ doit = {}
 legacy_tox_ini = """
 [tox]
 isolated_build = True
-envlist = py{36,37,38,39,310}
+envlist = py{36,37,38,39,310,311}
 
 [testenv]
 deps = 
