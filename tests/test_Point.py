@@ -3,7 +3,9 @@ import sys
 
 import pytest
 
-if sys.version_info <= (3, 9):  # Point requires Python 3.10 or higher.
+from pysj import py
+
+if py >= "3.10":  # Point requires Python 3.10 or higher.
     from pysj import Point
 
     def test_1d():
