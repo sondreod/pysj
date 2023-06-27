@@ -365,7 +365,7 @@ def chunk(n, iterable: Iterable, fillvalue=None):
     return zip_longest(*args, fillvalue=fillvalue)
 
 
-if sys.version_info <= (3, 9):  # Point requires Python 3.10 or higher.
+if py >= "3.10":  # Point requires Python 3.10 or higher.
 
     class Point:
         def __init__(
