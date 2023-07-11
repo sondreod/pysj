@@ -6,8 +6,11 @@ import time
 from datetime import date, datetime, timedelta
 from fractions import Fraction
 from itertools import islice, tee, zip_longest
+from pathlib import Path
 from typing import (Any, Callable, Iterable, List, Literal, Optional, Tuple,
                     Union)
+
+from pysj import uuid
 
 NUMPY_SUPPORT_FLAG = True
 try:
@@ -163,6 +166,25 @@ def months_in_interval(
 
         dt = dt + timedelta(days=40)
         dt = datetime(dt.year, dt.month, 1)
+
+
+def atomic_symlink(src: str, dst: str, raise_on_error=False):
+    """Atomically creates a symlink *src* pointing to *dst*.
+
+    Atomicity is achived trough renaming a temporary symlink with a random name.
+
+    If *raise_on_error* is True and the rename failes, the original exception is raised.
+    """
+
+    tmp_link = Path("/tmp") / uuid()  # type: ignore
+
+    tmp_link.symlink_to(dst)
+    try:
+        tmp_link.rename(src)  # Rename is atomic
+    except Exception:  # If rename failes, remove tmp_file.
+        tmp_link.unlink()
+        if raise_on_error:
+            raise
 
 
 def flatten(iterable: Iterable) -> list:
@@ -395,7 +417,7 @@ if py >= "3.10":  # Point requires Python 3.10 or higher.
 
 else:
 
-    class Point:
+    class Point:  # type: ignore
         def __init__(self, *_):
             raise NotImplementedError(
                 "The Point type is only implemented for Python >= 3.10."
