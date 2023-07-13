@@ -1,9 +1,10 @@
 import hashlib
 import json
 import uuid as _uuid
+from string import ascii_letters, digits
 from typing import Literal, Union
 
-ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ" "abcdefghijkmnpqrstuvwxyz" "23456789"
+ALPHABET = "".join(set(ascii_letters + digits) - set("IOlo10"))
 
 
 def _hash(plaintext: str, algorithm="sha256", force_mutable=False) -> str:
