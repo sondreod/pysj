@@ -1,3 +1,7 @@
+dev
+.ruff_cache/
+pants.toml
+BUILD
 .idea/
 .doit.db
 
