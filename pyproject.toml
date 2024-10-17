@@ -18,16 +18,19 @@ dynamic = ["version", "description"]
 Source = "https://github.com/sondreod/pysj"
 Documentation = "https://github.com/sondreod/pysj"
 
-[dev-dependencies]
-black = {}
-"hypothesis[cli]" = {}
-pytest = {}
-pytest-cov = {}
-coverage = {}
-numpy = {}
-tox = {}
-flit = {}
-doit = {}
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "isort",
+    "hypothesis[cli]",
+    "pytest",
+    "pytest-cov",
+    "coverage",
+    "numpy",
+    "tox",
+    "flit",
+]
 
 [tool.tox]
 legacy_tox_ini = """
