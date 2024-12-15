@@ -1,6 +1,3 @@
-import pytest
-from pytest import approx
-
 from pysj import first
 
 
