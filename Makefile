@@ -19,7 +19,7 @@ format:
 	isort .
 
 test:
-	tox -e py310
+	tox -e py312
 
 fulltest:
 	tox --skip-missing-interpreters

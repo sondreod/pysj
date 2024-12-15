@@ -7,7 +7,7 @@ name = "pysj"
 authors = [{name = "Sondre S. Ødegård"}]
 license = {file = "LICENSE"}
 readme = "README.md"
-requires-python = ">=3.6"
+requires-python = ">=3.10"
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Topic :: Software Development"
@@ -36,7 +36,7 @@ dev = [
 legacy_tox_ini = """
 [tox]
 isolated_build = True
-envlist = py{36,37,38,39,310,311}
+envlist = py{310,311,312,313}
 
 [testenv]
 deps = 
