@@ -7,8 +7,7 @@ from datetime import date, datetime, timedelta
 from fractions import Fraction
 from itertools import cycle, islice, tee, zip_longest
 from pathlib import Path
-from typing import (Any, Callable, Iterable, List, Literal, Optional, Tuple,
-                    Union)
+from typing import Iterable, List, Optional, Tuple
 
 from pysj import uuid
 

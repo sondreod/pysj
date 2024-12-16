@@ -1,11 +1,8 @@
-import datetime
-import json
 from collections import namedtuple
-from dataclasses import dataclass
 
 import pytest
 
-from pysj import exjson, ndjson
+from pysj import ndjson
 
 
 @pytest.fixture

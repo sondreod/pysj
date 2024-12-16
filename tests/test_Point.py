@@ -43,4 +43,4 @@ def test_hash_mix_int_and_float():
 
 
 def test_point_as_dict_key():
-    my_point = {Point(13, 37): "exactly"}
+    {Point(13, 37): "exactly"}

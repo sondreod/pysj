@@ -1,5 +1,3 @@
-import sys
-
 from pysj import PythonVersion
 
 
