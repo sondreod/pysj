@@ -8,5 +8,5 @@ from .main import (EmptyError, ExtendedJSONDecoder, ExtendedJSONEncoder,
                    ExtendedNDJSONDecoder, ExtendedNDJSONEncoder, NDJSONDecoder,
                    NDJSONEncoder, Point, PythonVersion, Timer, atomic_symlink,
                    chunk, first, flatten, isotime, months_in_interval,
-                   moving_average, n_wise, paginate, py, seconds, take,
-                   transpose, triplewise)
+                   moving_average, n_wise, paginate, seconds, take, transpose,
+                   triplewise)
