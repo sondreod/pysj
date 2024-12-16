@@ -5,7 +5,7 @@ import sys
 import time
 from datetime import date, datetime, timedelta
 from fractions import Fraction
-from itertools import islice, tee, zip_longest
+from itertools import cycle, islice, tee, zip_longest
 from pathlib import Path
 from typing import (Any, Callable, Iterable, List, Literal, Optional, Tuple,
                     Union)
@@ -33,6 +33,9 @@ class PythonVersion:
     def __str__(self):
         return self.version_string
 
+    def __int__(self):
+        return self._convert_version_to_int(self.version_string)
+
     def __repr__(self):
         return f"{type(self)} {self.version_string}"
 
@@ -59,9 +62,6 @@ class PythonVersion:
         if not isinstance(value, PythonVersion):
             value = PythonVersion(value)
         return value.version[0] * 100 + value.version[1]
-
-
-py = PythonVersion()
 
 
 class Timer:
@@ -99,7 +99,7 @@ class Timer:
 
 def isotime(precision="d", dt=None):
     """Get the current date/time in isoformat. Default precision is day, accepts d(ay), (h)our, (m)inute, (s)econd.
-    Per defualt the current time is used, this can be overriden by supplying a datetime object with the *dt* kwarg
+    Uses current time as default, can be overriden by setting *dt* to a datetime object.
     """
     if not dt:
         dt = datetime.now()
@@ -147,7 +147,7 @@ def seconds(
 def months_in_interval(
     start: datetime,
     end: Optional[datetime] = None,
-):
+) -> Iterable[Tuple[int, int]]:
     """Yields months and year from the given interval (start -> end).
 
     start: datetime
@@ -272,6 +272,34 @@ class ConfigurableJSONTranscoder:
         pass
 
 
+class NDJSONDecoder(json.JSONDecoder):
+    def decode(self, s, *args, **kwargs):
+        lines = ",".join(s.splitlines())
+        text = f"[{lines}]"
+        return super().decode(text, *args, **kwargs)
+
+
+class NDJSONEncoder(json.JSONEncoder):
+    def encode(self, o, *args, **kwargs):
+        lines = []
+        for el in o:
+            line = super().encode(el, *args, **kwargs)
+            lines.append(line)
+        return "\n".join(lines)
+
+
+class ExtendedNDJSONDecoder(NDJSONDecoder, ExtendedJSONDecoder):
+    pass  # Gotta love Python, this is elegance :)
+
+
+class ExtendedNDJSONEncoder(NDJSONEncoder, ExtendedJSONEncoder):
+    pass
+
+
+class EmptyError(BaseException):
+    pass
+
+
 def paginate(
     url: str,
     pagesize=500,
@@ -375,10 +403,19 @@ def take(n: int, iterable: Iterable):
     return islice(iterable, n)
 
 
-def first(iterable: Iterable):
+SENTINEL = object()
+
+
+def first(iterable: Iterable, empty_return_obj=SENTINEL):
     """Return first item of the *iterable*"""
     iterable_ = iter(iterable)
-    return next(iterable_)
+    try:
+        return next(iterable_)
+    except StopIteration:
+        if empty_return_obj is not SENTINEL:
+            return empty_return_obj
+        else:
+            raise EmptyError("Iterable passed to first() is empty.")
 
 
 def chunk(n, iterable: Iterable, fillvalue=None):
@@ -387,38 +424,45 @@ def chunk(n, iterable: Iterable, fillvalue=None):
     return zip_longest(*args, fillvalue=fillvalue)
 
 
-if py >= "3.10":  # Point requires Python 3.10 or higher.
+class Point:
+    def __init__(
+        self,
+        x: int | float | None = None,
+        y: int | float | None = None,
+        z: int | float | None = None,
+    ):
+        self.x = x
+        self.y = y
+        self.z = z
 
-    class Point:
-        def __init__(
-            self,
-            x: int | float | None = None,
-            y: int | float | None = None,
-            z: int | float | None = None,
-        ):
-            self.x = x
-            self.y = y
-            self.z = z
+        self.vector = tuple(s for s in [x, y, z] if s is not None)
+        self.dimensions = self.axis = len(self.vector)
 
-            self.vector = tuple(s for s in [x, y, z] if s is not None)
-            self.dimensions = self.axis = len(self.vector)
+    def __str__(self):
+        return f"Point({', '.join(map(str, self.vector))})"
 
-        def __str__(self):
-            return f"Point({', '.join(map(str, self.vector))})"
+    def __repr__(self):
+        return self.__str__()
 
-        def __repr__(self):
-            return self.__str__()
+    def __abs__(self):
+        return math.dist(tuple(0 for s in self.vector), self.vector)
 
-        def __abs__(self):
-            return math.dist(tuple(0 for s in self.vector), self.vector)
+    def __hash__(self):
+        return hash(str(list(map(float, self.vector))))
 
-        def __hash__(self):
-            return hash(str(list(map(float, self.vector))))
 
-else:
+def roundrobin(*iterables):
+    """Yields elements from iterables in turn (roundrobin) until all is exhausted.
 
-    class Point:  # type: ignore
-        def __init__(self, *_):
-            raise NotImplementedError(
-                "The Point type is only implemented for Python >= 3.10."
-            )
+    Recipe credited to George Sakkis.
+    From https://docs.python.org/3/library/itertools.html#itertools-recipes
+    """
+    num_active = len(iterables)
+    nexts = cycle(iter(it).__next__ for it in iterables)
+    while num_active:
+        try:
+            for next in nexts:
+                yield next()
+        except StopIteration:
+            num_active -= 1
+            nexts = cycle(islice(nexts, num_active))
