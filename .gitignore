@@ -1,4 +1,5 @@
 dev
+.vscode/
 .ruff_cache/
 pants.toml
 BUILD
