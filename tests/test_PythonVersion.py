@@ -1,10 +1,14 @@
 import sys
 
-from pysj import PythonVersion, py
+from pysj import PythonVersion
 
 
-def test_system_version():
-    assert PythonVersion() == ".".join(map(str, sys.version_info[:2])) == py
+def test_to_str():
+    assert str(PythonVersion(313)) == "3.13"
+
+
+def test_to_int():
+    assert int(PythonVersion("3.13")) == 313
 
 
 def test_lt():
