@@ -295,7 +295,7 @@ class ExtendedNDJSONEncoder(NDJSONEncoder, ExtendedJSONEncoder):
     pass
 
 
-class EmptyError(BaseException):
+class EmptyError(Exception):
     pass
 
 
